@@ -21,7 +21,7 @@ const MapModal = ({ isOpen, onClose, address, name }) => {
                         <div className="flex justify-between items-center mb-md">
                             <h3 className="font-bold text-xl flex items-center gap-sm">
                                 <Map size={20} className="text-primary" />
-                                {name} <span className="text-sm font-normal text-muted">({address})</span>
+                                {name} {address && <span className="text-sm font-normal text-muted">({address})</span>}
                             </h3>
                             <button onClick={onClose} className="text-muted hover:text-primary">
                                 <X size={24} />
