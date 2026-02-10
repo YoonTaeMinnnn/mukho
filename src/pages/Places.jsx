@@ -6,6 +6,8 @@ const PlaceManager = () => {
     const { places, addPlace, removePlace } = useTrip();
     const [newPlaceName, setNewPlaceName] = useState('');
     const [newPlaceAddress, setNewPlaceAddress] = useState('');
+    const [newPlaceDate, setNewPlaceDate] = useState('');
+    const [newPlaceTime, setNewPlaceTime] = useState('');
     const [category, setCategory] = useState('restaurant');
 
     const handleSubmit = (e) => {
@@ -16,10 +18,14 @@ const PlaceManager = () => {
             name: newPlaceName,
             category: category,
             address: newPlaceAddress,
+            date: newPlaceDate,
+            time: newPlaceTime,
             note: ''
         });
         setNewPlaceName('');
         setNewPlaceAddress('');
+        setNewPlaceDate('');
+        setNewPlaceTime('');
     };
 
     const getIcon = (cat) => {
@@ -80,6 +86,29 @@ const PlaceManager = () => {
                             />
                         </div>
 
+                        <div className="grid-2-col gap-sm">
+                            <div>
+                                <label className="block text-sm font-bold mb-sm">날짜 (선택)</label>
+                                <input
+                                    type="date"
+                                    value={newPlaceDate}
+                                    onChange={(e) => setNewPlaceDate(e.target.value)}
+                                    className="w-full"
+                                    style={{ width: '100%' }}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold mb-sm">시간 (선택)</label>
+                                <input
+                                    type="time"
+                                    value={newPlaceTime}
+                                    onChange={(e) => setNewPlaceTime(e.target.value)}
+                                    className="w-full"
+                                    style={{ width: '100%' }}
+                                />
+                            </div>
+                        </div>
+
                         <div>
                             <label className="block text-sm font-bold mb-sm">카테고리</label>
                             <div className="flex gap-sm">
@@ -87,7 +116,7 @@ const PlaceManager = () => {
                                     <button
                                         key={cat}
                                         type="button"
-                                        className={`btn ${category === cat ? 'btn-primary' : 'btn-outline'} `}
+                                        className={`btn ${category === cat ? 'btn-primary' : 'btn-outline'}`}
                                         onClick={() => setCategory(cat)}
                                     >
                                         {cat === 'restaurant' ? '맛집' : cat === 'cafe' ? '카페' : '관광지'}
@@ -118,7 +147,11 @@ const PlaceManager = () => {
                                     </div>
                                     <div>
                                         <div className="font-bold">{place.name}</div>
-                                        <div className="text-sm text-muted">{getCategoryName(place.category)}</div>
+                                        <div className="text-sm text-muted">
+                                            {getCategoryName(place.category)}
+                                            {place.date && ` • ${place.date}`}
+                                            {place.time && ` ${place.time}`}
+                                        </div>
                                         {place.address && <div className="text-xs text-muted opacity-75 mt-xs">{place.address}</div>}
                                     </div>
                                 </div>

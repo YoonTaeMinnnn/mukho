@@ -8,9 +8,6 @@ const Home = () => {
     const { places } = useTrip();
     const [selectedPlace, setSelectedPlace] = useState(null);
 
-    const mukhoPlace = places.find(p => p.id === 1) || { name: '묵호항', address: '강원도 동해시 묵호진동 13-1' };
-    const eodalPlace = places.find(p => p.id === 2) || { name: '어달을담다', address: '강원도 동해시 일출로 305' };
-
     const containerVariants = {
         hidden: { opacity: 0 },
         visible: {
@@ -27,6 +24,30 @@ const Home = () => {
             transition: { type: 'spring', stiffness: 100 }
         }
     };
+
+    // Group places by date
+    const groupedPlaces = places.reduce((acc, place) => {
+        const date = place.date || '날짜 미정';
+        if (!acc[date]) acc[date] = [];
+        acc[date].push(place);
+        return acc;
+    }, {});
+
+    // Sort dates (dates first, then '날짜 미정')
+    const sortedDates = Object.keys(groupedPlaces).sort((a, b) => {
+        if (a === '날짜 미정') return 1;
+        if (b === '날짜 미정') return -1;
+        return a.localeCompare(b);
+    });
+
+    // Sort places within each date by time
+    sortedDates.forEach(date => {
+        groupedPlaces[date].sort((a, b) => {
+            const timeA = a.time || '23:59'; // Put undefined time at the end
+            const timeB = b.time || '23:59';
+            return timeA.localeCompare(timeB);
+        });
+    });
 
     return (
         <>
@@ -45,47 +66,55 @@ const Home = () => {
                     </p>
                 </motion.section>
 
-                <motion.div className="grid-2-col gap-lg" variants={containerVariants}>
-                    <motion.div className="card bg-surface p-lg rounded-lg shadow-md border-top-primary hover-lift" variants={itemVariants}>
-                        <div className="flex items-center justify-between mb-md">
-                            <div className="flex items-center gap-sm text-primary">
-                                <MapPin size={28} />
-                                <h2 className="font-bold text-xl">여행지</h2>
-                            </div>
-                            <button
-                                onClick={() => setSelectedPlace(mukhoPlace)}
-                                className="btn btn-outline flex items-center gap-xs text-sm py-1 px-2"
+                <motion.div variants={containerVariants}>
+                    {sortedDates.map(date => (
+                        <div key={date} className="timeline-section mb-xl">
+                            <motion.h3
+                                className="font-bold text-2xl mb-lg text-primary border-bottom pb-sm"
+                                variants={itemVariants}
                             >
-                                <Map size={14} /> 위치 보기
-                            </button>
-                        </div>
-                        <h3 className="text-2xl font-bold mb-sm">묵호항</h3>
-                        <p className="text-muted mb-sm">
-                            강원도 동해시의 아름다운 항구. 논골담길, 묵호등대 등 볼거리가 가득한 힐링 여행지입니다.
-                        </p>
-                        <p className="text-sm text-muted opacity-75">{mukhoPlace.address}</p>
-                    </motion.div>
+                                {date === '날짜 미정' ? '📅 일정 미정' : `📅 ${date}`}
+                            </motion.h3>
 
-                    <motion.div className="card bg-surface p-lg rounded-lg shadow-md border-top-secondary hover-lift" variants={itemVariants}>
-                        <div className="flex items-center justify-between mb-md">
-                            <div className="flex items-center gap-sm text-secondary">
-                                <HomeIcon size={28} />
-                                <h2 className="font-bold text-xl">숙소</h2>
+                            <div className="grid-2-col gap-lg">
+                                {groupedPlaces[date].map((place) => (
+                                    <motion.div
+                                        key={place.id}
+                                        className="card bg-surface p-lg rounded-lg shadow-md border-top-primary hover-lift relative"
+                                        variants={itemVariants}
+                                    >
+                                        {place.time && (
+                                            <div className="absolute top-4 right-4 bg-light px-2 py-1 rounded text-sm font-bold text-primary">
+                                                {place.time}
+                                            </div>
+                                        )}
+
+                                        <div className="flex items-center justify-between mb-md">
+                                            <div className="flex items-center gap-sm text-primary">
+                                                {place.category === 'accommodation' ? <HomeIcon size={28} /> : <MapPin size={28} />}
+                                                <h2 className="font-bold text-xl">
+                                                    {place.category === 'restaurant' ? '맛집' :
+                                                        place.category === 'cafe' ? '카페' :
+                                                            place.category === 'accommodation' ? '숙소' : '여행지'}
+                                                </h2>
+                                            </div>
+                                            <button
+                                                onClick={() => setSelectedPlace(place)}
+                                                className="btn btn-outline flex items-center gap-xs text-sm py-1 px-2"
+                                            >
+                                                <Map size={14} /> 위치 보기
+                                            </button>
+                                        </div>
+                                        <h3 className="text-2xl font-bold mb-sm">{place.name}</h3>
+                                        <p className="text-muted mb-sm">
+                                            {place.note || (place.category === 'spot' ? '힐링 여행지' : '추천 장소')}
+                                        </p>
+                                        {place.address && <p className="text-sm text-muted opacity-75">{place.address}</p>}
+                                    </motion.div>
+                                ))}
                             </div>
-                            <button
-                                onClick={() => setSelectedPlace(eodalPlace)}
-                                className="btn btn-outline flex items-center gap-xs text-sm py-1 px-2"
-                                style={{ borderColor: 'var(--color-secondary)', color: 'var(--color-secondary)' }}
-                            >
-                                <Map size={14} /> 위치 보기
-                            </button>
                         </div>
-                        <h3 className="text-2xl font-bold mb-sm">어달을담다</h3>
-                        <p className="text-muted mb-sm">
-                            오션뷰가 멋진 감성 펜션. 편안한 휴식과 함께 동해의 일출을 즐길 수 있는 공간입니다.
-                        </p>
-                        <p className="text-sm text-muted opacity-75">{eodalPlace.address}</p>
-                    </motion.div>
+                    ))}
                 </motion.div>
             </motion.div>
 
