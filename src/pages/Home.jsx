@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { MapPin, Home as HomeIcon, Map } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { MapPin, Home as HomeIcon, Map, Trash2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import MapModal from '../components/MapModal';
 import { useTrip } from '../store/TripContext';
 
 const Home = () => {
-    const { places } = useTrip();
+    const { places, removePlace } = useTrip();
     const [selectedPlace, setSelectedPlace] = useState(null);
 
     const containerVariants = {
@@ -22,6 +22,11 @@ const Home = () => {
             y: 0,
             opacity: 1,
             transition: { type: 'spring', stiffness: 100 }
+        },
+        exit: {
+            opacity: 0,
+            scale: 0.9,
+            transition: { duration: 0.2 }
         }
     };
 
@@ -67,54 +72,75 @@ const Home = () => {
                 </motion.section>
 
                 <motion.div variants={containerVariants}>
-                    {sortedDates.map(date => (
-                        <div key={date} className="timeline-section mb-xl">
-                            <motion.h3
-                                className="font-bold text-2xl mb-lg text-primary border-bottom pb-sm"
-                                variants={itemVariants}
-                            >
-                                {date === '날짜 미정' ? '📅 일정 미정' : `📅 ${date}`}
-                            </motion.h3>
+                    <AnimatePresence>
+                        {sortedDates.map(date => (
+                            <motion.div key={date} className="timeline-section mb-xl" layout>
+                                <motion.h3
+                                    className="font-bold text-2xl mb-lg text-primary border-bottom pb-sm"
+                                    variants={itemVariants}
+                                    layout
+                                >
+                                    {date === '날짜 미정' ? '📅 일정 미정' : `📅 ${date}`}
+                                </motion.h3>
 
-                            <div className="grid-2-col gap-lg">
-                                {groupedPlaces[date].map((place) => (
-                                    <motion.div
-                                        key={place.id}
-                                        className="card bg-surface p-lg rounded-lg shadow-md border-top-primary hover-lift relative"
-                                        variants={itemVariants}
-                                    >
-                                        {place.time && (
-                                            <div className="absolute top-4 right-4 bg-light px-2 py-1 rounded text-sm font-bold text-primary">
-                                                {place.time}
-                                            </div>
-                                        )}
-
-                                        <div className="flex items-center justify-between mb-md">
-                                            <div className="flex items-center gap-sm text-primary">
-                                                {place.category === 'accommodation' ? <HomeIcon size={28} /> : <MapPin size={28} />}
-                                                <h2 className="font-bold text-xl">
-                                                    {place.category === 'restaurant' ? '맛집' :
-                                                        place.category === 'cafe' ? '카페' :
-                                                            place.category === 'accommodation' ? '숙소' : '여행지'}
-                                                </h2>
-                                            </div>
-                                            <button
-                                                onClick={() => setSelectedPlace(place)}
-                                                className="btn btn-outline flex items-center gap-xs text-sm py-1 px-2"
+                                <div className="grid-2-col gap-lg">
+                                    <AnimatePresence>
+                                        {groupedPlaces[date].map((place) => (
+                                            <motion.div
+                                                key={place.id}
+                                                className="card bg-surface p-lg rounded-lg shadow-md border-top-primary hover-lift relative group"
+                                                variants={itemVariants}
+                                                exit="exit"
+                                                layout
                                             >
-                                                <Map size={14} /> 위치 보기
-                                            </button>
-                                        </div>
-                                        <h3 className="text-2xl font-bold mb-sm">{place.name}</h3>
-                                        <p className="text-muted mb-sm">
-                                            {place.note || (place.category === 'spot' ? '힐링 여행지' : '추천 장소')}
-                                        </p>
-                                        {place.address && <p className="text-sm text-muted opacity-75">{place.address}</p>}
-                                    </motion.div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+                                                {place.time && (
+                                                    <div className="absolute top-4 right-4 bg-light px-2 py-1 rounded text-sm font-bold text-primary">
+                                                        {place.time}
+                                                    </div>
+                                                )}
+
+                                                <div className="flex items-center justify-between mb-md">
+                                                    <div className="flex items-center gap-sm text-primary">
+                                                        {place.category === 'accommodation' ? <HomeIcon size={28} /> : <MapPin size={28} />}
+                                                        <h2 className="font-bold text-xl">
+                                                            {place.category === 'restaurant' ? '맛집' :
+                                                                place.category === 'cafe' ? '카페' :
+                                                                    place.category === 'accommodation' ? '숙소' : '여행지'}
+                                                        </h2>
+                                                    </div>
+                                                    <div className="flex gap-xs">
+                                                        <button
+                                                            onClick={() => setSelectedPlace(place)}
+                                                            className="btn btn-outline flex items-center gap-xs text-sm py-1 px-2"
+                                                        >
+                                                            <Map size={14} /> 위치 보기
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                if (window.confirm('정말 삭제하시겠습니까?')) {
+                                                                    removePlace(place.id);
+                                                                }
+                                                            }}
+                                                            className="btn btn-outline flex items-center gap-xs text-sm py-1 px-2 hover:bg-red-50 text-red-500 border-red-200"
+                                                            style={{ borderColor: '#fee2e2', color: '#ef4444' }}
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <h3 className="text-2xl font-bold mb-sm">{place.name}</h3>
+                                                <p className="text-muted mb-sm">
+                                                    {place.note || (place.category === 'spot' ? '힐링 여행지' : '추천 장소')}
+                                                </p>
+                                                {place.address && <p className="text-sm text-muted opacity-75">{place.address}</p>}
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
                 </motion.div>
             </motion.div>
 

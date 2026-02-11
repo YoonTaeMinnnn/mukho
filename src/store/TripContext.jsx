@@ -17,10 +17,7 @@ export const TripProvider = ({ children }) => {
     };
 
     // Places state: Array of { id, name, category, note, address, date, time }
-    const [places, setPlaces] = useState(() => loadState('trip_places', [
-        { id: 1, name: '묵호항', category: 'spot', note: '여행의 시작점', address: '강원도 동해시 묵호진동 13-1' },
-        { id: 2, name: '어달을담다', category: 'accommodation', note: '숙소', address: '강원도 동해시 일출로 305' },
-    ]));
+    const [places, setPlaces] = useState(() => loadState('trip_places', []));
 
     // Budget state: Array of { id, description, amount, category }
     const [budgetItems, setBudgetItems] = useState(() => loadState('trip_budget', []));

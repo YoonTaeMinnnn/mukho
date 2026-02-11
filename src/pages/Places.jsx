@@ -47,8 +47,6 @@ const PlaceManager = () => {
         }
     };
 
-    const isFixed = (id) => id === 1 || id === 2;
-
     // Safety check
     if (!places) return <div className="container mt-lg">Loading...</div>;
 
@@ -156,14 +154,9 @@ const PlaceManager = () => {
                                     </div>
                                 </div>
 
-                                {!isFixed(place.id) && (
-                                    <button onClick={() => removePlace(place.id)} className="text-red-500 hover:text-red-700 transition-colors">
-                                        <Trash2 size={18} />
-                                    </button>
-                                )}
-                                {isFixed(place.id) && (
-                                    <span className="text-xs bg-gray-200 px-2 py-1 rounded">오리지널</span>
-                                )}
+                                <button onClick={() => removePlace(place.id)} className="text-red-500 hover:text-red-700 transition-colors">
+                                    <Trash2 size={18} />
+                                </button>
                             </li>
                         ))}
                     </ul>
