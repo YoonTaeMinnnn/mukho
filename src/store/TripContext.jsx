@@ -17,7 +17,11 @@ export const TripProvider = ({ children }) => {
     };
 
     // Places state: Array of { id, name, category, note, address, date, time }
-    const [places, setPlaces] = useState(() => loadState('trip_places', []));
+    const [places, setPlaces] = useState(() => {
+        const loaded = loadState('trip_places', []);
+        // Force remove legacy default places (ID 1 and 2) if they exist
+        return loaded.filter(p => p.id !== 1 && p.id !== 2);
+    });
 
     // Budget state: Array of { id, description, amount, category }
     const [budgetItems, setBudgetItems] = useState(() => loadState('trip_budget', []));
