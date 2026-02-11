@@ -106,6 +106,10 @@ select {
     justify-content: center;
 }
 
+.gap-xs {
+    gap: var(--spacing-xs);
+}
+
 .gap-sm {
     gap: var(--spacing-sm);
 }

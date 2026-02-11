@@ -8,6 +8,7 @@ const PlaceManager = () => {
     const [newPlaceAddress, setNewPlaceAddress] = useState('');
     const [newPlaceDate, setNewPlaceDate] = useState('');
     const [newPlaceTime, setNewPlaceTime] = useState('');
+    const [newPlaceNote, setNewPlaceNote] = useState('');
     const [category, setCategory] = useState('restaurant');
 
     const handleSubmit = (e) => {
@@ -20,12 +21,13 @@ const PlaceManager = () => {
             address: newPlaceAddress,
             date: newPlaceDate,
             time: newPlaceTime,
-            note: ''
+            note: newPlaceNote
         });
         setNewPlaceName('');
         setNewPlaceAddress('');
         setNewPlaceDate('');
         setNewPlaceTime('');
+        setNewPlaceNote('');
     };
 
     const getIcon = (cat) => {
@@ -105,6 +107,18 @@ const PlaceManager = () => {
                                     style={{ width: '100%' }}
                                 />
                             </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-bold mb-sm">설명 (선택)</label>
+                            <input
+                                type="text"
+                                value={newPlaceNote}
+                                onChange={(e) => setNewPlaceNote(e.target.value)}
+                                placeholder="예: 바다가 보이는 멋진 카페"
+                                className="w-full"
+                                style={{ width: '100%' }}
+                            />
                         </div>
 
                         <div>

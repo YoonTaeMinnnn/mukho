@@ -108,7 +108,7 @@ const Home = () => {
                                                                     place.category === 'accommodation' ? '숙소' : '여행지'}
                                                         </h2>
                                                     </div>
-                                                    <div className="flex gap-xs">
+                                                    <div className="flex gap-sm">
                                                         <button
                                                             onClick={() => setSelectedPlace(place)}
                                                             className="btn btn-outline flex items-center gap-xs text-sm py-1 px-2"
@@ -130,9 +130,7 @@ const Home = () => {
                                                     </div>
                                                 </div>
                                                 <h3 className="text-2xl font-bold mb-sm">{place.name}</h3>
-                                                <p className="text-muted mb-sm">
-                                                    {place.note || (place.category === 'spot' ? '힐링 여행지' : '추천 장소')}
-                                                </p>
+                                                {place.note && <p className="text-muted mb-sm">{place.note}</p>}
                                                 {place.address && <p className="text-sm text-muted opacity-75">{place.address}</p>}
                                             </motion.div>
                                         ))}
