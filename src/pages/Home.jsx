@@ -67,7 +67,7 @@ const Home = () => {
                         묵호항 여행
                     </h1>
                     <p className="text-muted" style={{ fontSize: '1.25rem' }}>
-                        바다의 낭만과 맛있는 음식이 있는 곳
+                        소윤이 보고싶어........
                     </p>
                 </motion.section>
 
